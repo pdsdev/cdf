@@ -72,7 +72,7 @@ public class VDRecord extends Record {
 		byte[] buff = new byte[256];
 		in.read(buff, 0, 256); offset += 256;  // The name of this attribute.
 		mName = new String(buff).trim();
-		if(mType == Constant.ZVDR_TYPE) {
+		if(mType == Constant.RECORD_ZVDR) {
 			mZNumDims = in.readInt(); offset += 4; // The number of dimensions for this zVariable. This field will not be present if this is an rVDR (rVariable).
 			if(mZNumDims > 0) { // Zero or more contiguous dimension sizes for this zVariable
 				mZDimSize = new int[mZNumDims];

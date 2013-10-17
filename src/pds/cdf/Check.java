@@ -314,7 +314,7 @@ public class Check {
 			if(vdr.mDataType != Constant.CDF_CHAR) {
 				vStart = 1;	// Character fields are allowed to have the first dimension to be variant
 			}
-			if(vdr.mType == Constant.ZVDR_TYPE) {
+			if(vdr.mType == Constant.RECORD_ZVDR) {
 				for(int i = vStart; i < vdr.mZNumDims; i++) {
 					if(vdr.mDimVarys[i] != -1) {
 						mMessages.add("Variable '" + vdr.mName + "' is not invariant.");
@@ -354,23 +354,23 @@ public class Check {
 		// Check for disallowed records
 		for(Record rec : cdf.mRecordList) {
 			switch(rec.getType()) {
-			case Constant.UIR_TYPE:	// UIR - Unused
+			case Constant.RECORD_UIR:	// UIR - Unused
 				// Unused records, but may not be referenced - Check of referenced UIR is already done.
 				// mMessages.add("There are unused variables in the CDF. These must be removed.");
 				break;
-			case Constant.RVDR_TYPE: // rVDR - Non-contiguous storage format
+			case Constant.RECORD_RVDR: // rVDR - Non-contiguous storage format
 				mMessages.add("There are rVariables present. These need to be converted to zVaraibles.");
 				break;
-			case Constant.CCR_TYPE:	// CCR - Compressed
+			case Constant.RECORD_CCR:	// CCR - Compressed
 				mMessages.add("There are compressed records in the CDF.");
 				break;
-			case Constant.CPR_TYPE:	// CPR - Compressed
+			case Constant.RECORD_CPR:	// CPR - Compressed
 				mMessages.add("There are compressed parameters in the CDF.");
 				break;
-			case Constant.SPR_TYPE:	// SPR - Sparse
+			case Constant.RECORD_SPR:	// SPR - Sparse
 				mMessages.add("There are sparse parameters in the CDF.");
 				break;
-			case Constant.CVVR_TYPE:	// CVVR - Compressed
+			case Constant.RECORD_CVVR:	// CVVR - Compressed
 				mMessages.add("There are compressed variables in the CDF.");
 				break;					
 			}

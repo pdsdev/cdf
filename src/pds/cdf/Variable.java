@@ -155,8 +155,25 @@ public class Variable {
 	 * 
 	 * @return the current dimensions of the variable.
 	 */
-	int[] getDims() { return mDims; }
+	public int[] getDims() { return mDims; }
 	
+
+	/**
+	 * Retrieve the value of a specified dimension of the variable.
+	 * 
+	 * @return the size of a dimension of the variable or -1 if an invalid dimension
+	 */
+	public int getDim(int n) { if(n < 0 || n >= mDims.length) { return -1; } else {return mDims[n]; } }
+	
+
+	/**
+	 * Retrieve the dimensions of the variable.
+	 * 
+	 * @return the current dimensions of the variable.
+	 */
+	public int getDimCount() { if(mDims == null) { return 0; } else { return mDims.length; } }
+	
+
 	/**
 	 * Set the pad values for each dimension of a variable.
 	 * The number of elements in the array must match the number of dimensions and the value of of each element 
@@ -184,6 +201,15 @@ public class Variable {
 	double[] getPadValue() { return mPadValue; }
 	
 	/**
+	 * Add a predefined attribute to the list of attributes.
+	 * 
+	 * @param attribute the predefined Attribute.
+	 */
+	public void addAttribute(Attribute attribute) { 
+		mAttributes.add(attribute);
+	}
+	
+	/**
 	 * Define an attribute and the values associated with the attribute.
 	 * 
 	 * @param name the name of the attribute.
@@ -206,6 +232,22 @@ public class Variable {
 	public String getAttributeValue(String name) {
 		for(Attribute a : mAttributes) {
 			if(a.getName().equals(name)) return a.getValueString();
+		}
+		
+		return "";
+	}
+	
+	/**
+	 * Retrieve an attribute with a given name.
+	 * 
+	 * @param name the name of the attribute.
+	 * @param delim the delimiter to place between values.
+	 * 
+	 * @return a string containing the formatted value. If no attribute exists then a empty string is returned. 
+	 */
+	public String getAttributeValue(String name, String delim) {
+		for(Attribute a : mAttributes) {
+			if(a.getName().equals(name)) return a.getValueString(delim);
 		}
 		
 		return "";

@@ -1,0 +1,458 @@
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>pds.cdf/Example</title>
+    <meta name="author" content="Todd King" />
+    <meta http-equiv="Content-Language" content="en" />
+    <link rel="stylesheet" href="../style.css" type="text/css" media="screen" />
+    <script type="text/javascript" src="../template.js"> </script>
+    <script type="text/javascript" src="sidebar.js"> </script>
+   </head>
+   <body>
+<div class="container">
+   <script>header();</script>
+   <script>sidebar();</script>
+   <div class="span9 content">
+   	<h2>Simple Exmaple</h2>
+      <p>
+      The pds.cdf jar library is also an exectable jar file. Built-in is a command-line tool
+      to display the metadata in a CDF file. It has the class name "pds.cdf.CDF". 
+      </p>
+      <p>A CDF file contains attributes and variables with attributes being either global or specific to a variable.
+      </p>
+      <p>
+      In the distribution are script files which make running the exectable easier and allows for 
+      using the jar file without system-wide installation. These scripts run "java" with options 
+      that point to the folder where the jar file is stored.
+      The command has the form:
+      </p>
+<div class="code">
+<pre>
+${options.command} {filename}
+</pre>
+</div>
+      <p>These scripts effectively run the command:</p>
+<div class="code">
+<pre>
+java -Djava.ext.dirs=${THIS_DIR}/../lib pds.cdf.CDF
+</pre>
+</div>
+      
+      <h2><a name="Velocity">Example</a></h2>
+      <p>
+      Using a simple CDF called <a href="example1.cdf">example1.cdf</a> and 
+      running the command:
+      </p>
+<div class="code">
+<pre>
+${options.command} example1.cdf
+</pre>
+</div>
+      <p>
+      Will generate the following output:
+      </p>
+<div class="code">
+<pre>
+Version: 0xcdf30001
+Compression: 0x0000ffff
+==================================
+            Global Attributes
+==================================
+Attrribute count: 26
+=================================
+      Attribute: Project
+=================================
+DataType: CDF_CHAR
+StartByte: 784
+values: 
+   THEMIS
+=================================
+      Attribute: Source_name
+=================================
+DataType: CDF_CHAR
+StartByte: 1170
+values: 
+   THG_L2>THEMIS Ground Based Observatory
+=================================
+      Attribute: Discipline
+=================================
+DataType: CDF_CHAR
+StartByte: 1588
+values: 
+   Space Physics>Magnetospheric Science
+   Space Physics>Ionospheric Science
+=================================
+      Attribute: Data_type
+=================================
+DataType: CDF_CHAR
+StartByte: 2093
+values: 
+   MAG
+=================================
+      Attribute: Descriptor
+=================================
+DataType: CDF_CHAR
+StartByte: 2476
+values: 
+   AND>Andenes, Norway
+=================================
+      Attribute: Data_version
+=================================
+DataType: CDF_CHAR
+StartByte: 2875
+values: 
+   1
+=================================
+      Attribute: PI_name
+=================================
+DataType: CDF_CHAR
+StartByte: 3256
+values: 
+   Truls Lynne Hansen
+=================================
+      Attribute: PI_affiliation
+=================================
+DataType: CDF_CHAR
+StartByte: 3654
+values: 
+   Tromso Geophysical Observatory Faculty of Science University of Tromso N-9037 Tromso, Norway
+=================================
+      Attribute: Instrument_type
+=================================
+DataType: CDF_CHAR
+StartByte: 4126
+values: 
+   Ground-Based Magnetometers, Riometers, Sounders
+=================================
+      Attribute: Mission_group
+=================================
+DataType: CDF_CHAR
+StartByte: 4553
+values: 
+   THEMIS
+=================================
+      Attribute: Logical_source
+=================================
+DataType: CDF_CHAR
+StartByte: 4939
+values: 
+   thg_l2_mag_and
+=================================
+      Attribute: Logical_file_id
+=================================
+DataType: CDF_CHAR
+StartByte: 5333
+values: 
+   thg_l2_mag_and_20121226_v01
+=================================
+      Attribute: Logical_source_description
+=================================
+DataType: CDF_CHAR
+StartByte: 5740
+values: 
+   Ground-based Vector Magnetic Field at Andenes, Norway, 1 minute time Resolution.
+=================================
+      Attribute: Time_resolution
+=================================
+DataType: CDF_CHAR
+StartByte: 6202
+values: 
+   60.0 s
+=================================
+      Attribute: Rules_of_use
+=================================
+DataType: CDF_CHAR
+StartByte: 6588
+values: 
+   The geomagnetic information available at our web-pages is primarily intended for the non-commercial scientific community, educational purposes, and the general public. Commercial users of our services are urged to contact us to establish an agreement of use. As part of an agreement we normally offer to construct exclusive web-pages specifically for the application in question. We accept no liability for loss or damages of any kind resulting from this or from errors or inaccuracies in the data.
+=================================
+      Attribute: Generated_by
+=================================
+DataType: CDF_CHAR
+StartByte: 7466
+values: 
+   THEMIS SOC
+=================================
+      Attribute: Generation_date
+=================================
+DataType: CDF_CHAR
+StartByte: 7856
+values: 
+   Fri Dec 28 08:00:23 2012
+=================================
+      Attribute: Acknowledgement
+=================================
+DataType: CDF_CHAR
+StartByte: 8260
+values: 
+   Tromso Geophysical Observatory, University of Tromso, Norway
+=================================
+      Attribute: MODS
+=================================
+DataType: CDF_CHAR
+StartByte: 8700
+values: 
+   Rev- 2010-05-13
+Rev-2012-01-10 lphilpott Adding declination
+=================================
+      Attribute: ADID_ref
+=================================
+DataType: CDF_CHAR
+StartByte: 9140
+values: 
+   NSSD0110
+=================================
+      Attribute: HTTP_LINK
+=================================
+DataType: CDF_CHAR
+StartByte: 9528
+values: 
+   http://flux.phys.uit.no/geomag.html
+=================================
+      Attribute: File_naming_convention
+=================================
+DataType: CDF_CHAR
+StartByte: 9943
+values: 
+   source_datatype_descriptor
+=================================
+      Attribute: Software_version
+=================================
+DataType: CDF_CHAR
+StartByte: 10349
+values: 
+   xxxx
+=================================
+      Attribute: TEXT
+=================================
+DataType: CDF_CHAR
+StartByte: 10733
+values: 
+   Part of the Tromso Geophysical Observatory ground magnetometer network
+=================================
+      Attribute: LINK_TITLE
+=================================
+DataType: CDF_CHAR
+StartByte: 11184
+values: 
+   Tromso Geophysical Observatory
+=================================
+      Attribute: LINK_TEXT
+=================================
+DataType: CDF_CHAR
+StartByte: 11602
+values: 
+   Main menu: data access
+==================================
+            Variables
+==================================
+Variable count: 8
+=================================
+      Variable: thg_mag_and
+=================================
+DataType: CDF_REAL4
+Flags: 0x00000001
+Index: 0
+StartByte: 26275
+Dims: 3
+PadValue:
+RecordCount: 1440
+Attributes: 
+   CATDESC = Magnetic field B in HDZ vector components
+   DEPEND_0 = thg_mag_and_epoch
+   DEPEND_1 = thg_mag_and_compno
+   DISPLAY_TYPE = time_series
+   FIELDNAM = B in HDZ Components
+   FILLVAL = NaN
+   FORMAT = f9.2
+   LABL_PTR_1 = thg_mag_and_labl
+   UNIT_PTR = thg_mag_and_unit
+   VALIDMIN = -60000.0 6.7700764E25 3.711801E19
+   VALIDMAX = 60000.0 6.7700173E25 3.6973893E19
+   VAR_TYPE = data
+   SCALETYP = linear
+   VAR_NOTES = Rotated from geographic XYZ components using declination provided by TGU.
+   DEPEND_TIME = thg_mag_and_time
+   DEPEND_EPOCH0 = thg_mag_and_epoch0
+   STATION_LATITUDE = 69.2953
+   STATION_LONGITUDE = 16.0381
+   STATION_ELEVATION = 10.0
+   STATION_DECLINATION = 5.49
+=================================
+      Variable: thg_mag_and_unit
+=================================
+DataType: CDF_CHAR
+Flags: 0x000000000
+Index: 1
+StartByte: 44059
+Dims: 3
+PadValue:
+RecordCount: 1
+Attributes: 
+   CATDESC = thg_mag_and_unit
+   FIELDNAM = thg_mag_and_unit
+   FORMAT = a2
+   VAR_TYPE = metadata
+   DICT_KEY = label
+=================================
+      Variable: thg_mag_and_labl
+=================================
+DataType: CDF_CHAR
+Flags: 0x000000000
+Index: 2
+StartByte: 44569
+Dims: 3
+PadValue:
+RecordCount: 1
+Attributes: 
+   CATDESC = thg_mag_and_labl
+   FIELDNAM = thg_mag_and_labl
+   FORMAT = a21
+   VAR_TYPE = metadata
+   DICT_KEY = label
+=================================
+      Variable: thg_mag_and_compno
+=================================
+DataType: CDF_INT4
+Flags: 0x000000000
+Index: 3
+StartByte: 45136
+Dims: 3
+PadValue:
+RecordCount: 1
+Attributes: 
+   CATDESC = HDZ Component Number
+   FIELDNAM = HDZ Component Number
+   FILLVAL = -2147483648
+   FORMAT = i2
+   LABL_PTR_1 = thg_mag_and_labl
+   VALIDMIN = 1 256 65536
+   VALIDMAX = 3 768 196608
+   VAR_TYPE = support_data
+   SCALETYP = linear
+   DICT_KEY = number
+=================================
+      Variable: thg_mag_and_time
+=================================
+DataType: CDF_REAL8
+Flags: 0x00000001
+Index: 4
+StartByte: 45644
+Dims: 1
+PadValue:
+RecordCount: 1440
+Attributes: 
+   CATDESC = thg_mag_and_time,.UTC, in seconds since 01-Jan-1970 00:00:00
+   DEPEND_0 = thg_mag_and_epoch
+   FIELDNAM = thg_mag_and_time
+   FILLVAL = NaN
+   FORMAT = E13.6
+   VALIDMIN = 0.0
+   VALIDMAX = 5.0E9
+   VAR_TYPE = support_data
+   VAR_NOTES = Unleaped seconds
+   LABLAXIS = UT
+   UNITS = sec
+=================================
+      Variable: thg_mag_and_epoch
+=================================
+DataType: CDF_EPOCH
+Flags: 0x00000001
+Index: 5
+StartByte: 0
+Dims: 1
+PadValue:
+RecordCount: 0
+Attributes: 
+   CATDESC = thg_mag_and_Epoch
+   FIELDNAM = thg_mag_and_Epoch
+   FILLVAL = -1.0E31
+   VALIDMIN = 6.31455264E13
+   VALIDMAX = 6.6301199999999E13
+   VAR_TYPE = support_data
+   LABLAXIS = UT
+   VIRTUAL = TRUE
+   FUNCT = comp_themis_epoch
+   COMPONENT_0 = thg_mag_and_epoch0
+   COMPONENT_1 = thg_mag_and_time
+=================================
+      Variable: thg_mag_and_epoch0
+=================================
+DataType: CDF_EPOCH
+Flags: 0x000000000
+Index: 6
+StartByte: 58004
+Dims: 1
+PadValue:
+RecordCount: 1
+Attributes: 
+   CATDESC = EPOCH0 of THEMIS TIME BASE
+   FIELDNAM = thg_mag_and_epoch0
+   FILLVAL = -1.0E31
+   VALIDMIN = 5.99582304E13
+   VALIDMAX = 6.4060675199999E13
+   VAR_TYPE = support_data
+   VAR_NOTES = EPOCH of 01-Jan-1970 00:00:00
+   LABLAXIS = timebase
+   UNITS = msec
+=================================
+      Variable: range_epoch
+=================================
+DataType: CDF_EPOCH
+Flags: 0x00000001
+Index: 7
+StartByte: 58508
+Dims: 1
+PadValue:
+RecordCount: 2
+Attributes: 
+   CATDESC = range_epoch
+   FIELDNAM = range_epoch
+   FILLVAL = -1.0E31
+   VALIDMIN = 6.31455264E13
+   VALIDMAX = 6.6301199999999E13
+   VAR_TYPE = support_data
+   LABLAXIS = UT
+   UNITS = msec
+==================================
+            Data Variables
+==================================
+=================================
+      Variable: thg_mag_and
+=================================
+DataType: CDF_REAL4
+Flags: 0x00000001
+Index: 0
+StartByte: 26275
+Dims: 3
+PadValue:
+RecordCount: 1440
+Attributes: 
+   CATDESC = Magnetic field B in HDZ vector components
+   DEPEND_0 = thg_mag_and_epoch
+   DEPEND_1 = thg_mag_and_compno
+   DISPLAY_TYPE = time_series
+   FIELDNAM = B in HDZ Components
+   FILLVAL = NaN
+   FORMAT = f9.2
+   LABL_PTR_1 = thg_mag_and_labl
+   UNIT_PTR = thg_mag_and_unit
+   VALIDMIN = -60000.0 6.7700764E25 3.711801E19
+   VALIDMAX = 60000.0 6.7700173E25 3.6973893E19
+   VAR_TYPE = data
+   SCALETYP = linear
+   VAR_NOTES = Rotated from geographic XYZ components using declination provided by TGU.
+   DEPEND_TIME = thg_mag_and_time
+   DEPEND_EPOCH0 = thg_mag_and_epoch0
+   STATION_LATITUDE = 69.2953
+   STATION_LONGITUDE = 16.0381
+   STATION_ELEVATION = 10.0
+   STATION_DECLINATION = 5.49
+</pre>
+</div>
+
+</div><!-- span -->
+<script>footer();</script>
+</div><!-- container -->
+</body>
+</html>

@@ -36,20 +36,20 @@ public class Constant {
 	/** 1-byte, signed character (ASCII). */ 	static final public int CDF_CHAR=51;
 	
 	// Record Types
-	/** Unused Internal Record (UIR). */					static final public int UIR_TYPE=-1;
-	/** CDF Descriptor Record (CDR). */						static final public int CDR_TYPE=1;
-	/** Global Descriptor Record (GDR). */					static final public int GDR_TYPE=2;
-	/** rVariable Descriptor Record (RVDR). */				static final public int RVDR_TYPE=3;
-	/** Attribute Descriptor Record (ADR). */				static final public int ADR_TYPE=4;
-	/** Attribute g/rEntry Descriptor Record (AGREDR). */	static final public int AGREDR_TYPE=5;
-	/** Variable Index Record (VXR). */						static final public int VXR_TYPE=6;
-	/** Variable Values Record (VVR). */					static final public int VVR_TYPE=7;
-	/** zVariable Descriptor Record (ZVDR). */				static final public int ZVDR_TYPE=8;
-	/** Attribute zEntry Descriptor Record (AZEDR). */		static final public int AZEDR_TYPE=9;
-	/** Compressed CDF Record (CCR). */						static final public int CCR_TYPE=10;
-	/** Compression Parameters Record (CPR). */				static final public int CPR_TYPE=11;
-	/** Sparseness Parameters Record (SPR). */				static final public int SPR_TYPE=12;
-	/** Compressed Variable Values Record (CVVR). */		static final public int CVVR_TYPE=13;
+	/** Unused Internal Record (UIR). */					static final public int RECORD_UIR=-1;
+	/** CDF Descriptor Record (CDR). */						static final public int RECORD_CDR=1;
+	/** Global Descriptor Record (GDR). */					static final public int RECORD_GDR=2;
+	/** rVariable Descriptor Record (RVDR). */				static final public int RECORD_RVDR=3;
+	/** Attribute Descriptor Record (ADR). */				static final public int RECORD_ADR=4;
+	/** Attribute g/rEntry Descriptor Record (AGREDR). */	static final public int RECORD_AGREDR=5;
+	/** Variable Index Record (VXR). */						static final public int RECORD_VXR=6;
+	/** Variable Values Record (VVR). */					static final public int RECORD_VVR=7;
+	/** zVariable Descriptor Record (ZVDR). */				static final public int RECORD_ZVDR=8;
+	/** Attribute zEntry Descriptor Record (AZEDR). */		static final public int RECORD_AZEDR=9;
+	/** Compressed CDF Record (CCR). */						static final public int RECORD_CCR=10;
+	/** Compression Parameters Record (CPR). */				static final public int RECORD_CPR=11;
+	/** Sparseness Parameters Record (SPR). */				static final public int RECORD_SPR=12;
+	/** Compressed Variable Values Record (CVVR). */		static final public int RECORD_CVVR=13;
 	
 	/** Compression on value. */	static final public int CompressionOn = 0xCCCC0001;
 	/** Compression off value. */	static final public int CompressionOff = 0x0000FFFF;
@@ -131,20 +131,20 @@ public class Constant {
 	static public String getRecTypeName(int recType)
 	{
 		switch(recType) {
-		case CDR_TYPE: return("CDR");
-		case GDR_TYPE: return("GDR");
-		case ADR_TYPE: return("ADR");
-		case VXR_TYPE: return("VXR");
-		case VVR_TYPE: return("VVR");
-		case ZVDR_TYPE: return("zVDR");
-		case AGREDR_TYPE: return("AgreEDR");
-		case AZEDR_TYPE: return("AzEDR");
-		case UIR_TYPE: return("UIR");
-		case RVDR_TYPE: return("rVDR");
-		case CCR_TYPE: return("CCR");
-		case CPR_TYPE: return("CPR");
-		case SPR_TYPE: return("SPR");
-		case CVVR_TYPE: return("CVVR");
+		case RECORD_CDR: return("CDR");
+		case RECORD_GDR: return("GDR");
+		case RECORD_ADR: return("ADR");
+		case RECORD_VXR: return("VXR");
+		case RECORD_VVR: return("VVR");
+		case RECORD_ZVDR: return("zVDR");
+		case RECORD_AGREDR: return("AgreEDR");
+		case RECORD_AZEDR: return("AzEDR");
+		case RECORD_UIR: return("UIR");
+		case RECORD_RVDR: return("rVDR");
+		case RECORD_CCR: return("CCR");
+		case RECORD_CPR: return("CPR");
+		case RECORD_SPR: return("SPR");
+		case RECORD_CVVR: return("CVVR");
 		}
 		
 		return("Unknown [" + recType + "]");
@@ -167,19 +167,51 @@ public class Constant {
 		case CDF_UINT1: return("CDF_UINT1");
 		case CDF_UINT2: return("CDF_UINT2");
 		case CDF_UINT4: return("CDF_UINT4");
-		case CDF_BYTE: return("CDF_BYTE5");
+		case CDF_BYTE: return("CDF_BYTE");
 		case CDF_REAL4: return("CDF_REAL4");
 		case CDF_REAL8: return("CDF_REAL8");
-		case CDF_FLOAT: return("CDF_FLOAT6");
-		case CDF_DOUBLE: return("CDF_DOUBLE7");
-		case CDF_EPOCH: return("CDF_EPOCH8");
-		case CDF_EPOCH16: return("CDF_EPOCH169");
+		case CDF_FLOAT: return("CDF_FLOAT");
+		case CDF_DOUBLE: return("CDF_DOUBLE");
+		case CDF_EPOCH: return("CDF_EPOCH");
+		case CDF_EPOCH16: return("CDF_EPOCH16");
 		case CDF_TIME_TT2000: return("CDF_TIME_TT2000");
 		case CDF_CHAR: return("CDF_CHAR");
 		}
 		
 		return("Unknown");
 	}
+
+	/**
+	 * Translate a data type token into a name.
+	 * 
+	 * @param dataType the data type token.
+	 * 
+	 * @return the corresponding name for the token.
+	 */
+	static public String getDataTypePDS(int dataType)
+	{
+		switch(dataType) {
+		case CDF_INT1: return("SignedByte");
+		case CDF_INT2: return("SignedMSB2");
+		case CDF_INT4: return("SignedMSB4");
+		case CDF_INT8: return("SignedMSB8");
+		case CDF_UINT1: return("UnsignedByte");
+		case CDF_UINT2: return("UnsignedMSB2");
+		case CDF_UINT4: return("UnsignedMSB8");
+		case CDF_BYTE: return("UnsignedByte");
+		case CDF_REAL4: return("IEEE754MSBSingle");
+		case CDF_REAL8: return("IEEE754MSBDouble");
+		case CDF_FLOAT: return("IEEE754MSBSingle");
+		case CDF_DOUBLE: return("IEEE754MSBDouble");
+		case CDF_EPOCH: return("IEEE754MSBDouble");
+		case CDF_EPOCH16: return("ComplexMSB16");// Really two doubles
+		case CDF_TIME_TT2000: return("IEEE754MSBDouble");
+		case CDF_CHAR: return("UnsignedByte");
+		}
+		
+		return("Unknown");
+	}
+
 
 	/**
 	 * Retrieve the size in bytes of a data type.

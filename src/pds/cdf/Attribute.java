@@ -101,6 +101,15 @@ public class Attribute {
 	 * 
 	 * @return a formatted string containing all values.
 	 */
-	public String getValueString() { String buffer = ""; for(String v : mValues) { buffer += " " + v; } return buffer; 	}
+	public String getValueString() { return getValueString(" "); }
+
+	/**
+	 * Retrieve all values as a delimited string.  
+	 * 
+	 * @param delim the delimiter to place between each value.
+	 * 
+	 * @return a formatted string containing all values.
+	 */
+	public String getValueString(String delim) { String buffer = ""; String d = ""; for(String v : mValues) { buffer += d + v; d = delim;} return buffer; 	}
 
 }

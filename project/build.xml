@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <!--
    Standard build targets for projects.
 
@@ -162,19 +163,26 @@
     <target name="dist" depends="jar,api,kit">
         <mkdir dir="${dist.dir}"/>
         <zip destfile="${dist.dir}/${package.name}-${version}-dist.zip">
-            <zipfileset dir="${jar.dir}" prefix="jar" />
-            <zipfileset dir="${api.dir}" prefix="api" />
-            <zipfileset dir="${lib.dir}" prefix="lib" erroronmissingdir="false" />
-            <zipfileset dir="${lib.dir}" prefix="lib" erroronmissingdir="false" />
-            <zipfileset dir="${bin-kit.dir}" prefix="bin" erroronmissingdir="false" />
-            <zipfileset dir="${project.dir}" includes="LICENSE.TXT" erroronmissingdir="false" />
-            <zipfileset dir="${project.dir}" includes="README.TXT" erroronmissingdir="false" />
-            <zipfileset dir="${doc.dir}" prefix="doc" includes="**/*.pdf" erroronmissingdir="false" />
-            <zipfileset dir="${tutorial.dir}" prefix="tutorial" includes="**/*.pdf" erroronmissingdir="false" />
-            <zipfileset dir="${example.dir}" prefix="example" erroronmissingdir="false" />
-            <zipfileset dir="${xsd.dir}" prefix="xsd" erroronmissingdir="false" />
-            <zipfileset dir="${conf.dir}" prefix="conf" erroronmissingdir="false" />
+            <zipfileset dir="${jar.dir}" prefix="${package.name}-${version}/jar" />
+            <zipfileset dir="${api.dir}" prefix="${package.name}-${version}/api" />
+            <zipfileset dir="${jar.dir}" prefix="${package.name}-${version}/lib" includes="**/${package.name}-${version}.jar" excludes="**/*-javadoc.jar"  />    <!-- Merge with all lib files -->
+            <zipfileset dir="${lib.dir}" prefix="${package.name}-${version}/lib" erroronmissingdir="false" />
+            <zipfileset dir="${bin-kit.dir}" prefix="${package.name}-${version}/bin" erroronmissingdir="false" />
+            <zipfileset dir="${project.dir}" prefix="${package.name}-${version}" includes="LICENSE.TXT" erroronmissingdir="false" />
+            <zipfileset dir="${project.dir}" prefix="${package.name}-${version}" includes="README.TXT" erroronmissingdir="false" />
+            <zipfileset dir="${doc.dir}" prefix="${package.name}-${version}/doc" includes="**/*.pdf" erroronmissingdir="false" />
+            <zipfileset dir="${tutorial.dir}" prefix="${package.name}-${version}/tutorial" includes="**/*.pdf" erroronmissingdir="false" />
+            <zipfileset dir="${example.dir}" prefix="${package.name}-${version}/example" erroronmissingdir="false" />
+            <zipfileset dir="${xsd.dir}" prefix="${package.name}-${version}/xsd" erroronmissingdir="false" />
+            <zipfileset dir="${conf.dir}" prefix="${package.name}-${version}/conf" erroronmissingdir="false" />
         </zip>
+        <copy todir="${dist.dir}">
+             <fileset dir="${build.dir}/doc" includes="**" />
+         </copy>
+        <mkdir dir="${dist.dir}/api"/>
+        <copy todir="${dist.dir}/api">
+             <fileset dir="${build.dir}/api" includes="**" />
+         </copy>
     </target>
 
     <!-- Build a distribution kit which contains everything -->
@@ -240,7 +248,31 @@
             <arg value="${package.name}.md" /> <!-- Source Markdown file -->
             <arg value="../${build.dir}/doc/${package.name}.pdf"/> <!-- Output -->
         </exec>
-    </target>
+        <!-- Create Web pages -->
+        <copy todir="${build.dir}/doc" >
+           <fileset dir="${doc.dir}" includes="*.*" excludes="index.html sidebar.js" />
+        </copy>
+        <exec executable="\projects\tools\igpp-docgen\bin\docgen.bat" dir="${doc.dir}">
+            <arg value="-o" /> <arg value="../${build.dir}/doc/index.html"/>   <!-- Output -->
+            <arg value="-f" /> <arg value="html"/>  <!-- Output Format -->
+            <arg value="package=${package.name}" /> <!-- Set variable "package" -->
+            <arg value="version=${version}" /> <!-- Set variable "package" -->
+            <arg value="command=${package.command}" /> <!-- Set variable "command" -->
+            <arg value="index.html"/> <!-- Template -->
+        </exec>
+        <exec executable="\projects\tools\igpp-docgen\bin\docgen.bat" dir="${doc.dir}">
+            <arg value="-o" /> <arg value="../${build.dir}/doc/sidebar.js"/>   <!-- Output -->
+            <arg value="-f" /> <arg value="plain"/>  <!-- Output Format -->
+            <arg value="package=${package.name}" /> <!-- Set variable "package" -->
+            <arg value="version=${version}" /> <!-- Set variable "package" -->
+            <arg value="command=${package.command}" /> <!-- Set variable "command" -->
+            <arg value="sidebar.js"/> <!-- Template -->
+        </exec>
+        <mkdir dir="${build.dir}/doc/example"/>
+        <copy todir="${build.dir}/doc/example" >
+           <fileset dir="${doc.dir}/example" includes="**" />
+        </copy>
+   </target>
         
     <!-- Perform JUnit testing -->
     <target name="junit" depends="jar">
@@ -282,28 +314,8 @@
 
     	<!-- Copy files -->
        <scp todir="${release.user}@${release.host}:${release.path}" password="${release.password}" >
-          <fileset dir="${project.dir}" includes="info.htm"  erroronmissingdir="false" />
+          <fileset dir="${dist.dir}" includes="**"   erroronmissingdir="false" />
        </scp>
-       <scp todir="${release.user}@${release.host}:${release.path}/api" password="${release.password}" >
-          <fileset dir="${api.dir}"       erroronmissingdir="false" />
-       </scp>
-       <scp todir="${release.user}@${release.host}:${release.path}/jar" password="${release.password}" >
-          <fileset dir="${jar.dir}"       erroronmissingdir="false" />
-       </scp>
-       <scp todir="${release.user}@${release.host}:${release.path}/lib" password="${release.password}" >
-          <fileset dir="${lib.dir}"       erroronmissingdir="false" />
-       </scp>
-       <scp todir="${release.user}@${release.host}:${release.path}/kit" password="${release.password}" >
-          <fileset dir="${kit.dir}"       erroronmissingdir="false" />
-       </scp>
-       <scp todir="${release.user}@${release.host}:${release.path}/dist" password="${release.password}" >
-          <fileset dir="${dist.dir}"       erroronmissingdir="false" />
-       </scp>
-       <scp todir="${release.user}@${release.host}:${release.path}/doc" password="${release.password}" >
-          <fileset dir="${doc.dir}" includes="**/*.pdf" erroronmissingdir="false" />
-       </scp>
-       <scp todir="${release.user}@${release.host}:${release.path}/tutorial" password="${release.password}" >
-          <fileset dir="${tutorial.dir}" includes="**/*.pdf" erroronmissingdir="false" />
-       </scp>
+ 
     </target>
 </project>

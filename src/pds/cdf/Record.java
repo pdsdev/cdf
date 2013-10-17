@@ -99,7 +99,7 @@ public class Record {
 	/**
 	 * Set the type of record.
 	 * 
-	 *  See {@see Constants} for available types.
+	 *  See {@link Constant} for available types.
 	 *  
 	 * @param type the record type.
 	 */

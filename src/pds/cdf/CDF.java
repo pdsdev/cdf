@@ -5,6 +5,7 @@ import java.io.EOFException;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
@@ -33,6 +34,9 @@ public class CDF {
 	int mCompression = 0;
 	
 	boolean mVerbose = false;
+	
+	// Stored arguments
+	String mPathName = "-stream-";
 	
 	// Record list
 	ArrayList<Record> mRecordList = new ArrayList<Record>();
@@ -66,7 +70,7 @@ public class CDF {
 		mAppOptions.addOption("h", "help", false, "Dispay this text");
 		mAppOptions.addOption("v", "verbose", false, "Verbose. Show status at each step.");
 		mAppOptions.addOption("a", "attributes", false, "Attributes. Show attribute information.");
-		mAppOptions.addOption("r", "varriables", false, "Variables. Show variable information.");
+		mAppOptions.addOption("r", "variables", false, "Variables. Show variable information.");
 	}
 
 	/**
@@ -88,7 +92,7 @@ public class CDF {
 			if (line.hasOption("h")) me.showHelp();
 			if (line.hasOption("v")) me.mVerbose = true;
 			if (line.hasOption("a")) showAttributes = true;
-			if (line.hasOption("v")) showVariables = true;
+			if (line.hasOption("r")) showVariables = true;
 			
 			// Default is to show both attributes and varaibles
 			if( ! showAttributes && ! showVariables) {
@@ -141,7 +145,20 @@ public class CDF {
 		System.out.println("");
 	}
 
-
+	/**
+	 * Parse a CDF file.
+	 * 
+	 * @param pathname the file system path and file name to a CDF file.
+	 * 
+	 * @throws IOException
+	 */
+	public CDF(String pathname) throws IOException {
+		mPathName = pathname;
+		DataInputStream in = new DataInputStream(new FileInputStream(pathname));
+		parse(in);
+		in.close();
+	}
+	
 	/**
 	 * Parse a CDF file.
 	 * 
@@ -150,6 +167,17 @@ public class CDF {
 	 * @throws IOException
 	 */
 	public CDF(DataInputStream in) throws IOException {
+		parse(in);
+	}
+	
+	/**
+	 * Parse a CDF file.
+	 * 
+	 * @param in pre-opened {@link DataInputStream} to a CDF file.
+	 * 
+	 * @throws IOException
+	 */
+	public void parse(DataInputStream in) throws IOException {
 		
 		// Magic numbers
 		mVersion = in.readInt(); mOffset += 4;
@@ -163,42 +191,42 @@ public class CDF {
 				Record rec = readRecord(in);
 				if(mVerbose) rec.dump();
 				switch(rec.getType()) {
-				case Constant.CDR_TYPE:	// CDR
+				case Constant.RECORD_CDR:	// CDR
 					mCDR = new CDRecord(rec);
 					mOffset = mCDR.read(mOffset, in);
 					break;
-				case Constant.GDR_TYPE:	// GDR
+				case Constant.RECORD_GDR:	// GDR
 					mGDR = new GDRecord(rec);
 					mOffset = mGDR.read(mOffset, in);
 					break;
-				case Constant.ADR_TYPE: // ADR
+				case Constant.RECORD_ADR: // ADR
 					ADRecord adr = new ADRecord(rec);
 					mADRList.add(adr);
 					mOffset = adr.read(mOffset, in);
 					break;
-				case Constant.AGREDR_TYPE: // AgrEDR
-				case Constant.AZEDR_TYPE: // AzEDR
+				case Constant.RECORD_AGREDR: // AgrEDR
+				case Constant.RECORD_AZEDR: // AzEDR
 					AEDRecord aedr = new AEDRecord(rec);
 					mAEDRList.add(aedr);
 					mOffset = aedr.read(mOffset, in);
 					break;
-				case Constant.VXR_TYPE: // VXR
+				case Constant.RECORD_VXR: // VXR
 					VXRecord vxr = new VXRecord(rec);
 					mVXRList.add(vxr);
 					mOffset = vxr.read(mOffset, in);
 					break;					
-				case Constant.VVR_TYPE: // VVR
+				case Constant.RECORD_VVR: // VVR
 					VVRecord vvr = new VVRecord(rec);
 					mVVRList.add(vvr);
 					mOffset = vvr.read(mOffset, in);
 					break;
-				case Constant.RVDR_TYPE: // rVDR
+				case Constant.RECORD_RVDR: // rVDR
 					VDRecord rvdr = new VDRecord(rec, mGDR.mRNumDims);
 					mCurrentVDR = rvdr;
 					mVDRList.add(rvdr);
 					mOffset = rvdr.read(mOffset, in);
 					break;
-				case Constant.ZVDR_TYPE: // zVDR
+				case Constant.RECORD_ZVDR: // zVDR
 					VDRecord zvdr = new VDRecord(rec, 0);
 					mCurrentVDR = zvdr;
 					mVDRList.add(zvdr);
@@ -245,11 +273,12 @@ public class CDF {
 			Variable v = new Variable();
 			mVariables.add(v);
 			v.setName(vdr.mName);
+			v.setDataType(vdr.mDataType);
 			v.setIndex(vdr.mNum);
 			v.setFlags(vdr.mFlags);
 			v.setStartByte(getVariableStartByte(vdr));
 			v.setRecordCount(vdr.mMaxRec+1);	// Always add 1 - zero referenced
-			if(vdr.mType == Constant.ZVDR_TYPE) {
+			if(vdr.mType == Constant.RECORD_ZVDR) {
 				if(vdr.mZNumDims == 0) {
 					int[] d = { 1 };
 					v.setDims(d);					
@@ -267,7 +296,6 @@ public class CDF {
 		for(ADRecord adr : mADRList) {
 			if(adr.mScope == Constant.SCOPE_VARIABLE || adr.mScope == Constant.SCOPE_VARIABLE_ASSUME) {
 				Attribute attr = new Attribute();
-				mAttributes.add(attr);
 				attr.setName(adr.mName);
 				
 				AEDRecord aedr = null;
@@ -286,10 +314,10 @@ public class CDF {
 				ArrayList<String> values = new ArrayList<String>(listSize);
 				for(int i = 0; i < listSize; i++) values.add("");
 				
-				while(aedr != null) {
+				while(aedr != null) {	// Element number corresponds to variable number
 					mVariables.get(aedr.mNum).setAttribute(adr.mName, Constant.valueToArrayList(aedr.mValue, aedr.mDataType, aedr.mNumElems));
 					aedr = getAEDR(aedr.mAEDRnext);
-				}				
+				}			
 			}
 		}	
 		
@@ -416,7 +444,7 @@ public class CDF {
 		
 		return values;
 	}
-	
+
 	/**
 	 * Retrieve all values for an attribute.
 	 * 
@@ -440,7 +468,7 @@ public class CDF {
 		
 		return values;
 	}
-	
+
 	/**
 	 * Retrieve a list of all global attribute names.
 	 * 
@@ -591,7 +619,45 @@ public class CDF {
 		} 
 		return startByte;
 	}
-	
+
+ 	/** 
+     * Generate a nested HashMap for the CDF file that includes file information.
+     * The {@link HashMap} is a keyword, value map. Each OBJECT is stored
+     * in a ArrayList with a HashMap of the object. The value assigned
+     * to the OBJECT keyword is mapped to "OBJECT_NAME" in the {@link HashMap}.
+     * The first file referenced by an object pointer is assigned to "PRODUCT_FILE"
+     * and the MD5 checksum for the file is assigned to "PRODUCT_MD5".
+     *
+     * @since           1.0
+     */
+	public HashMap<String, Object> getHashMap() {
+		
+		HashMap<String, Object> map = new HashMap<String, Object>();
+		
+		map.put("attributes", mAttributes);
+		map.put("variables", mVariables);
+		map.put("data", getDataVariables());
+		
+		CDRecord cdr = getCDR();
+		map.put("version", "" + Constant.toHexString(cdr.mVersion));
+		map.put("release", "" + cdr.mRelease);
+		map.put("increment", "" + cdr.mIncrement);
+		map.put("encoding", Constant.getEncodingName(cdr.mEncoding));
+		map.put("copyright", cdr.mCopyright);
+		
+		map.put("pathName", mPathName);
+		
+		map.put("fileMD5", "");
+		if( ! mPathName.equals("-stream-")) {	// if pathname defined
+			try {
+				map.put("fileMD5", igpp.util.Digest.digestFile(mPathName));
+			} catch(Exception e) {
+				// Do nothing
+			}
+		}
+		return map;
+	}
+
 	/**
 	 * Display a description of each attribute or variable.
 	 * 
@@ -621,11 +687,17 @@ public class CDF {
 			for(Variable v : getVariables()) {
 				v.dump();
 			}
+			System.out.println("==================================");
+			System.out.println("            Data Variables");
+			System.out.println("==================================");
+			for(Variable v : getDataVariables()) {
+				v.dump();
+			}
 		}
 	}
-	
+
 	/**
-	 * Determine if any data is sprase.
+	 * Determine if any data is sparse.
 	 *  
 	 * @return true if there is sparse data, otherwise false.
 	 */
@@ -633,7 +705,7 @@ public class CDF {
 	{
 		for(Record r : mRecordList) {
 			switch(r.mType) {
-			case Constant.SPR_TYPE: return true;
+			case Constant.RECORD_SPR: return true;
 			}
 		}
 		
@@ -676,6 +748,13 @@ public class CDF {
 	public long getOffset() { return mOffset; }
 	
 	/**
+	 * Retrieve the current pathname value.
+	 * 
+	 * @return the current pathname value.
+	 */
+	public String getPathName() { return mPathName; }
+	
+	/**
 	 * Retrieve the {@link CDRecord} for the CDF.
 	 * @return the {@link CDRecord} for the CDF.
 	 */
@@ -694,7 +773,53 @@ public class CDF {
 	 * @return the {@link ArrayList} of {@link Attribute} defined in the CDF.
 	 */
 	public ArrayList<Attribute> getAttributes() { return mAttributes; }
+
+	/**
+	 * Retrieve the description of a global attribute with the given name.
+	 * 
+	 * @param name	the name of the attribute
+	 * 
+	 * @return the {@link Attribute} with the matching name or NULL if none found.
+	 */
+	public Attribute getAttribute(String name) {
+		for(Attribute att : mAttributes) {
+			if(att.mName.equals(name)) return att;
+		}
+		
+		return null;
+	}
 	
+
+	/**
+	 * Retrieve the value of a global attribute with the given name. 
+	 * If the value is multi-value use ", " as the delimiter. 
+	 * 
+	 * @param name	the name of the attribute
+	 * 
+	 * @return the value of the matching attribute or an empty string if no attribute is found.
+	 * */
+	public String getAttributeValue(String name) {
+		return getAttributeValue(name, ", ");
+	}
+	
+	/**
+	 * Retrieve the value of a global attribute with the given name. 
+	 * If the value is multi-value placed the delim string between each value. 
+	 * 
+	 * @param name	the name of the attribute
+	 * @param delim	the delimiter string to place between values.
+	 * 
+	 * @return the value of the matching attribute or an empty string if no attribute is found.
+	 * */
+	public String getAttributeValue(String name, String delim) {
+		for(Attribute att : mAttributes) {
+			if(att.mName.equals(name)) return att.getValueString(delim);
+		}
+		
+		return "";
+	}
+	
+
 	/**
 	 * Retrieve the description of each variable defined in the CDF.
 	 * 
@@ -703,9 +828,30 @@ public class CDF {
 	public ArrayList<Variable> getVariables() { return mVariables; }
 	
 	/**
+	 * Retrieve the description of each variable which has the VAR_TYPE attribute of "data".
+	 * 
+	 * An ISTP compliant CDF defines a VAR_TYPE attribute to indicated the role of the variable.
+	 * If VAR_TYPE attribute is not defined the variable is considered data.
+	 * 
+	 * @return the {@link ArrayList} of {@link Variable} defined in the CDF.
+	 */
+	public ArrayList<Variable> getDataVariables() {
+		ArrayList<Variable> variables = new ArrayList<Variable>();
+		for(Variable v : mVariables) {
+			String type = v.getAttributeValue("VAR_TYPE").trim();	// Sometimes has leading/trailing spaces.
+			if(type.isEmpty() || type.equals("data")) variables.add(v);
+		}
+		return variables; 
+	}
+	
+	/**
 	 * Retrieve a list of all records defined in the CDF.
 	 * 
 	 * @return the {@link ArrayList} of {@link Variable} defined in the CDF.
 	 */
 	public ArrayList<Record> getRecordList() { return mRecordList; }
+	
+	public String getDataTypePDS(int dataType) {
+		return Constant.getDataTypePDS(dataType);
+	}
 }
