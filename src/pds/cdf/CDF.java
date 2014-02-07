@@ -2,6 +2,7 @@ package pds.cdf;
 
 import java.io.DataInputStream;
 import java.io.EOFException;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -47,6 +48,7 @@ public class CDF {
 	ArrayList<VVRecord> mVVRList = new ArrayList<VVRecord>();
 	ArrayList<VDRecord> mVDRList = new ArrayList<VDRecord>();
 	ArrayList<AEDRecord> mAEDRList = new ArrayList<AEDRecord>();
+	ArrayList<UIRecord> mUIRList = new ArrayList<UIRecord>();
 
 	// Processed items
 	ArrayList<Attribute> mAttributes = new ArrayList<Attribute>();
@@ -86,11 +88,12 @@ public class CDF {
 		try {
 			boolean showAttributes = false;
 			boolean showVariables = false;
+			boolean verbose = false;
 			
 			CommandLine line = parser.parse(me.mAppOptions, args);
 
 			if (line.hasOption("h")) me.showHelp();
-			if (line.hasOption("v")) me.mVerbose = true;
+			if (line.hasOption("v")) verbose = true;
 			if (line.hasOption("a")) showAttributes = true;
 			if (line.hasOption("r")) showVariables = true;
 			
@@ -102,14 +105,20 @@ public class CDF {
 			
 			// Process arguments looking for variable context
 			if (line.getArgs().length != 1) {
-				System.out.println("Pass the file to transform as a plain command-line argument.");
+				me.showHelp();
 				return;
 			}
 
 			for (String name : line.getArgs()) {
-				if (me.mVerbose) System.out.println("Processing: " + name);
+				if (verbose) {
+					System.out.println("Processing: " + name);
+					File temp = new File(name);
+					System.out.println("File size: " + temp.length());
+				}
 				DataInputStream in = new DataInputStream(new FileInputStream(name));
-				CDF cdf = new CDF(in);
+				CDF cdf = new CDF();
+				cdf.setVerbose(verbose);
+				cdf.parse(in);;
 				cdf.dump(showAttributes, showVariables);
 
 				for(String message : me.mMessages) {
@@ -153,7 +162,7 @@ public class CDF {
 	 * @throws IOException
 	 */
 	public CDF(String pathname) throws IOException {
-		mPathName = pathname;
+		mPathName = pathname;		
 		DataInputStream in = new DataInputStream(new FileInputStream(pathname));
 		parse(in);
 		in.close();
@@ -185,9 +194,12 @@ public class CDF {
 
 		mCompression = in.readInt();  mOffset += 4;
 
+		long endOfCDF = -1;
+		
 		try {
 			boolean more = true;
 			while(more) {
+				if(endOfCDF > 0 && mOffset >= endOfCDF) { more = false; break; }
 				Record rec = readRecord(in);
 				if(mVerbose) rec.dump();
 				switch(rec.getType()) {
@@ -198,6 +210,7 @@ public class CDF {
 				case Constant.RECORD_GDR:	// GDR
 					mGDR = new GDRecord(rec);
 					mOffset = mGDR.read(mOffset, in);
+					endOfCDF = mGDR.mEOF;
 					break;
 				case Constant.RECORD_ADR: // ADR
 					ADRecord adr = new ADRecord(rec);
@@ -232,16 +245,23 @@ public class CDF {
 					mVDRList.add(zvdr);
 					mOffset = zvdr.read(mOffset, in);
 					break;
+				case Constant.RECORD_UIR: // UIR
+					UIRecord uir = new UIRecord(rec);
+					mUIRList.add(uir);
+					mOffset = uir.read(mOffset, in);
+					break;
 				default:	// All others
-					if(rec.getSize() == 0) { more = false; break; } 	// Something wrong.
+					if(rec.getSize() <= 0) { more = false; break; } 	// Something wrong - Maybe checksum at end of file
 					long loffset = rec.getSize() - 12;
-					in.skip(loffset); mOffset += loffset;
+					if(loffset > 0) {
+						in.skip(loffset); mOffset += loffset;
+					}
 					break;
 				}
 			}
 			
 		} catch(EOFException ex) {
-			// System.out.println("EOF at: " + mOffset);
+			System.out.println("Unexpected EOF at: " + mOffset);
 			// Done
 		} catch(Exception ex) {
 			System.out.println("File does not appear to be a well formed CDF.");
@@ -259,15 +279,18 @@ public class CDF {
 				AEDRecord aedr = null;
 				if(adr.mAgrEDRhead != 0) { aedr = getAEDR(adr.mAgrEDRhead); }
 				if(adr.mAzEDRhead != 0) { aedr = getAEDR(adr.mAzEDRhead); }
-				attr.setDataType(aedr.mDataType);
-				attr.setStartByte(aedr.mDataStartByte);
-				while(aedr != null) {
-					attr.addValues(Constant.valueToArrayList(aedr.mValue, aedr.mDataType, aedr.mNumElems));
-					aedr = getAEDR(aedr.mAEDRnext);
+				if(aedr != null) {
+					attr.setDataType(aedr.mDataType);
+					attr.setStartByte(aedr.mDataStartByte);
+					while(aedr != null) {
+						attr.addValues(Constant.valueToArrayList(aedr.mValue, aedr.mDataType, aedr.mNumElems));
+						aedr = getAEDR(aedr.mAEDRnext);
+					}
 				}				
 			}
 		}	
 
+		if(mVerbose) System.out.println("Generating variable list.");
 		// Define Variables
 		for(VDRecord vdr : mVDRList) {
 			Variable v = new Variable();
@@ -276,6 +299,11 @@ public class CDF {
 			v.setDataType(vdr.mDataType);
 			v.setIndex(vdr.mNum);
 			v.setFlags(vdr.mFlags);
+			if(mVerbose) System.out.println("VXR head: " + vdr.mVXRHead);
+			if(mVerbose) {
+				System.out.println("VXR: ");
+				getVXR(vdr.mVXRHead).dump();
+			}
 			v.setStartByte(getVariableStartByte(vdr));
 			v.setRecordCount(vdr.mMaxRec+1);	// Always add 1 - zero referenced
 			if(vdr.mType == Constant.RECORD_ZVDR) {
@@ -407,6 +435,23 @@ public class CDF {
 		}
 		
 		return vxr;
+	}
+	
+	/**
+	 * Retrieve a UIRecord with the given index.
+	 * 
+	 * @param index the file offset as defined in the CDF file.
+	 * 
+	 * @return the corresponding {@link UIRecord} or null if none found.
+	 */	
+	public UIRecord getUIR(long index) {
+		UIRecord uir = null;
+		
+		for(UIRecord a : mUIRList) {	// Scan list of ADR for matching index
+			if(a.mOffset == index) uir = a; 
+		}
+		
+		return uir;
 	}
 	
 	/**
@@ -854,4 +899,20 @@ public class CDF {
 	public String getDataTypePDS(int dataType) {
 		return Constant.getDataTypePDS(dataType);
 	}
+	
+	/**
+	 * Set the verbose state.
+	 * 
+	 * @param state	true to turn verbose mode on, otherwise false.
+	 * 
+	 * @return the current verbose state. 
+	 */
+	public boolean setVerbose(boolean state) { mVerbose = state; return mVerbose; }
+	
+	/**
+	 * Return the current verbose state.
+	 * 
+	 * @return the current verbose state.
+	 */
+	public boolean getVerbose() { return mVerbose; }
 }

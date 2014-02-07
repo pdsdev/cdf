@@ -18,7 +18,7 @@ import org.apache.commons.cli.HelpFormatter;
  */
 public class Dump {
 	private String mVersion = "0.0.1";
-	private String mOverview = "Scan a CDF file show the data block information.";
+	private String mOverview = "Scan a CDF file and show the data block information.";
 	private String mAcknowledge = "Development funded by NASA's PDS project at UCLA.";
 
 	private boolean mVerbose = false;
@@ -55,8 +55,7 @@ public class Dump {
 			if (line.hasOption("v")) me.mVerbose = true;
 			// Process arguments looking for variable context
 			if (line.getArgs().length != 1) {
-				System.out
-						.println("Pass the file to transform as a plain command-line argument.");
+				me.showHelp();
 				return;
 			}
 
@@ -123,13 +122,13 @@ public class Dump {
 	
 		VDRecord vdr = cdf.getVDR(cdf.getGDR().mRVDRhead);
 		while(vdr != null) {
-			vdr.dump(cdf);
+			vdr.dump();
 			vdr = cdf.getVDR(vdr.mVDRnext);
 		}
 		
 		vdr = cdf.getVDR(cdf.getGDR().mZVDRhead);
 		while(vdr != null) {
-			vdr.dump(cdf);
+			vdr.dump();
 			vdr = cdf.getVDR(vdr.mVDRnext);
 		}
 		

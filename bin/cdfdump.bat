@@ -13,5 +13,5 @@ set THIS_DIR=%~dp0
 :: to be passed into the executable.
 
 echo %THIS_DIR%
-java -Djava.ext.dirs=%THIS_DIR%jar pds.cdf.CDF %*
+java -Djava.ext.dirs="%THIS_DIR%jar;%JAVA_HOME%/jre/lib/ext" pds.cdf.Dump %*
 :END

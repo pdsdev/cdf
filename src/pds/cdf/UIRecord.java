@@ -17,7 +17,7 @@ public class UIRecord extends Record {
 	long mNextUIR = 0L;
 	
 	/**
-	 * Create a AEDRecord based on a base record.
+	 * Create a UIRecord based on a base record.
 	 * 
 	 * @param base the base record to derive a AEDRecord.
 	 */

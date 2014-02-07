@@ -87,7 +87,7 @@ public class VDRecord extends Record {
 		
 		if((mFlags & Constant.FLAG_PAD) == Constant.FLAG_PAD) {
 			mPadValue = new double[mNumElems];
-			for(int i = 0; i < mNumElems; i++) { mPadValue[i] = in.readInt(); offset += Constant.getDataTypeSize(mDataType); }
+			for(int i = 0; i < mNumElems; i++) { mPadValue[i] = readDataValue(in, mDataType); offset += Constant.getDataTypeSize(mDataType); }
 		}
 		
 		return offset;
@@ -96,7 +96,7 @@ public class VDRecord extends Record {
 	/**
 	 * Display a description of the record.
 	 */
-	public void dump(CDF cdf) {
+	public void dump() {
 		System.out.println("=================================");
 		System.out.println("              VDR");
 		System.out.println("=================================");

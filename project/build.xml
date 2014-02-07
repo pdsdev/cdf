@@ -147,6 +147,7 @@
     <!-- Construct a self-contained "bin" directory for command-line tools -->
     <target name="bin" depends="bin.check" if="bin.run" >
         <mkdir dir="${bin-kit.dir}"/>
+    	<delete dir="${bin-kit.dir}/jar"/>
         <mkdir dir="${bin-kit.dir}/jar"/>
         <copy todir="${bin-kit.dir}">
            <fileset dir="${bin.dir}"/>
@@ -256,20 +257,26 @@
             <arg value="-o" /> <arg value="../${build.dir}/doc/index.html"/>   <!-- Output -->
             <arg value="-f" /> <arg value="html"/>  <!-- Output Format -->
             <arg value="package=${package.name}" /> <!-- Set variable "package" -->
-            <arg value="version=${version}" /> <!-- Set variable "package" -->
+            <arg value="base=${package.base}" /> <!-- Set variable "base" -->
+            <arg value="version=${version}" /> <!-- Set variable "version" -->
             <arg value="command=${package.command}" /> <!-- Set variable "command" -->
+            <arg value="host=${release.host}" /> <!-- Set variable "host" -->
+            <arg value="path=${release.path}" /> <!-- Set variable "path" -->
             <arg value="index.html"/> <!-- Template -->
         </exec>
         <exec executable="\projects\tools\igpp-docgen\bin\docgen.bat" dir="${doc.dir}">
             <arg value="-o" /> <arg value="../${build.dir}/doc/sidebar.js"/>   <!-- Output -->
             <arg value="-f" /> <arg value="plain"/>  <!-- Output Format -->
             <arg value="package=${package.name}" /> <!-- Set variable "package" -->
-            <arg value="version=${version}" /> <!-- Set variable "package" -->
+            <arg value="base=${package.base}" /> <!-- Set variable "base" -->
+            <arg value="version=${version}" /> <!-- Set variable "version" -->
             <arg value="command=${package.command}" /> <!-- Set variable "command" -->
+            <arg value="host=${release.host}" /> <!-- Set variable "host" -->
+            <arg value="path=${release.path}" /> <!-- Set variable "path" -->
             <arg value="sidebar.js"/> <!-- Template -->
         </exec>
         <mkdir dir="${build.dir}/doc/example"/>
-        <copy todir="${build.dir}/doc/example" >
+        <copy todir="${build.dir}/doc/example" failonerror="false">
            <fileset dir="${doc.dir}/example" includes="**" />
         </copy>
    </target>

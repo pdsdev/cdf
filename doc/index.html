@@ -1,7 +1,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-    <title>pds.cdf</title>
+    <title>${options.base}</title>
     <meta name="author" content="Todd King" />
     <meta http-equiv="Content-Language" content="en" />
     <link rel="stylesheet" href="style.css" type="text/css" media="screen" />
@@ -17,10 +17,10 @@
          <strong>Version: ${options.version}</strong>.
       </div>
       
-      <h1><a name="About">About pds.cdf</a></h1>
+      <h1><a name="About">About ${options.base}</a></h1>
       <p>
       The ${options.package} is a Java class library for reading file stored in the <a href="http://cdf.gsfc.nasa.gov/">Common Data Format</a> (CDF)
-      With the labrary you can access all the metadata in the CDF file. It is also designed to integrate into 
+      With the library you can access all the metadata in the CDF file. It is also designed to integrate into 
       tools based on <a href="http://en.wikipedia.org/wiki/Apache_Velocity">Apache Velocity</a>.
       </p>
    
@@ -39,10 +39,10 @@
       </p>
       
       <h1><a name="Unpacking">Unpacking the Package</a></h1>
-      <p><a href="pds-cdf-${options.version}-dist.jar">Download</a> the <i>pds.cdf</i> package from the IGPP 
-      	<a class="externalLink" href="http://release.igpp.ucla.edu/pds/cdf/" target="_blank">web site</a> 
+      <p><a href="${options.package}-${options.version}-dist.zip">Download</a> the <i>${options.package}</i> package from the IGPP 
+      	<a class="externalLink" href="http://${options.host}/${options.path}" target="_blank">web site</a> 
       	To use the jar file, first unbundle the distribution package, then place jar files in the "jar" folder
-      	in one of the folders on your Java search path. The package comes with convienence scripts in the "bin"
+      	in one of the folders on your Java search path. The package comes with convenience scripts in the "bin"
       	folder which allows running the jar files without system wide installation.
       </p>
       <p>

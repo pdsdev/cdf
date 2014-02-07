@@ -54,7 +54,7 @@ public class Constant {
 	/** Compression on value. */	static final public int CompressionOn = 0xCCCC0001;
 	/** Compression off value. */	static final public int CompressionOff = 0x0000FFFF;
 
-	/**  eXternal Data Representation */ 	static final public int ENCODING_NETWORK=1;
+	/** eXternal Data Representation */ 	static final public int ENCODING_NETWORK=1;
 	/** Sun representation */				static final public int ENCODING_SUN=2;
 	/** VAX representation */				static final public int ENCODING_VAX=3;
 	/** DECstation representation */		static final public int ENCODING_DECSTATION=4;

@@ -63,7 +63,7 @@ public class Check {
 			if (line.hasOption("v")) me.mVerbose = true;
 			// Process arguments looking for variable context
 			if (line.getArgs().length != 1) {
-				System.out.println("Pass the file to transform as a plain command-line argument.");
+				me.showHelp();
 				return;
 			}
 
@@ -148,7 +148,8 @@ public class Check {
 			return;
 		}
 		if(gdr.mUIRhead != 0L) {
-			mMessages.add("There are unused variables in the CDF. These must be removed.");
+			mMessages.add("There are unused records in the CDF, most likely remenants of deleted or overwritten varaibles or attributes. These must be removed.");
+			mMessages.add("Unused record contains: " + cdf.getUIR(gdr.mUIRhead).mSize + " bytes at offset: " + cdf.getUIR(gdr.mUIRhead).mOffset + " bytes.");
 			
 		}
 		if(cdf.hasSparseness()) {
@@ -280,7 +281,7 @@ public class Check {
 			// Check if virtual
 			VXRecord vxr = cdf.getVXR(vdr.mVXRHead);
 			if(vxr == null) {	// Not data - must be virtual
-				mMessages.add("Variable '" + vdr.mName + "' is calculated (virtual).");				
+				mMessages.add("Variable '" + vdr.mName + "' does not contain any data and may be calculated (virtual).");				
 				stat += " Virtual";
 			} else {
 				if(vxr.mNusedEntries > 1) {
@@ -298,13 +299,9 @@ public class Check {
 						stat += " Record Variant";			
 					}
 					switch(v.getDataType()) {
-					case Constant.CDF_BYTE:
-					case Constant.CDF_EPOCH:
 					case Constant.CDF_EPOCH16:
-					case Constant.CDF_TIME_TT2000:
-					case Constant.CDF_CHAR:
-						mMessages.add("Variable '" + vdr.mName + "' has the non-allowed data type of" + Constant.getDataTypeName(v.getDataType()) + ".");
-						stat += " Data Typet";			
+						mMessages.add("Variable '" + vdr.mName + "' has the non-allowed data type of " + Constant.getDataTypeName(v.getDataType()) + ".");
+						stat += " Data Type";			
 					}
 				}
 			}

@@ -14,7 +14,7 @@ import java.io.IOException;
 public class VVRecord extends Record {
 	
 	long mDataStartByte = 0L;
-	
+
 	/**
 	 * Create a VVRecord based on a base record.
 	 * 
@@ -37,7 +37,8 @@ public class VVRecord extends Record {
 	public long read(long offset, DataInputStream in) throws IOException {
 		mDataStartByte = offset;
 		long loffset = getSize() - 12;
-		in.skip(loffset); offset += loffset;
+		in.skip(loffset);
+		offset += loffset;
 		
 		return offset;
 	}	
