@@ -12,6 +12,5 @@ set THIS_DIR=%~dp0
 :: The special variable '%*' allows the arguments
 :: to be passed into the executable.
 
-echo %THIS_DIR%
 java -Djava.ext.dirs="%THIS_DIR%jar;%JAVA_HOME%/jre/lib/ext" pds.cdf.CDF %*
 :END

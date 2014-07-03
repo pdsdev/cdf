@@ -75,7 +75,35 @@ public class Record {
 			case Constant.CDF_EPOCH: value = in.readDouble(); break;
 			case Constant.CDF_EPOCH16: value = in.readDouble(); value = in.readDouble(); break; // Does not return full value
 			case Constant.CDF_TIME_TT2000: value = in.readLong(); break; // Does not return full value
-			case Constant.CDF_CHAR: value = in.readChar(); break;
+			case Constant.CDF_CHAR: value = in.readByte(); break;
+		}
+
+		return value;
+	}
+	
+	/**
+	 * Read a data value based on the passed data type.
+	 * 
+	 * @param in the input stream to read from.
+	 * @param dataType	the data type of the value.
+	 * @param length	the number of characters to read.
+	 * 
+	 * @return a String containing the value.
+	 * 
+	 * @throws IOException if any reading error occurs.
+	 */
+	public String readStringValue(DataInputStream in, int dataType, int length) throws IOException {
+		String value = "";
+
+		switch(dataType) {
+			case Constant.CDF_CHAR: {
+				byte bString[] = new byte[length];
+				for(int i = 0; i < length; i++) {
+					bString[i] = in.readByte();
+				}
+				value = new String(bString, "US-ASCII");
+				break;
+			}
 		}
 
 		return value;

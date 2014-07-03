@@ -5,7 +5,7 @@
    See "build.xml" for how each property influences the build.
 -->
 <project name="project-config" basedir="." default="config">
-    <property name="version"         value="1.0.3"/>
+    <property name="version"         value="1.0.6"/>
     <property name="package.title"   value="PDS CDF parser"/>
     <property name="package.name"    value="pds-cdf"/>
     <property name="package.base"    value="pds.cdf"/>

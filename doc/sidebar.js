@@ -8,6 +8,7 @@ var html = [
 '         <li><a href="#Requirements">System Requirements</a></li>',
 '         <li><a href="#Unpacking">Unpacking the Package</a></li>',
 '         <li><a href="#Using">Using the Tool</a></li>',
+'         <li><a href="#Velocity">Using with Apache Velocity</a></li>',
 '      </ul>',
 '      <ul class="nav nav-list">',
 '         <li class="nav-header">Quick Links</li>',

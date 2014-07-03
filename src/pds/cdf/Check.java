@@ -73,9 +73,9 @@ public class Check {
 				
 				// Output messages
 				if(me.mMessages.isEmpty()) {
-					System.out.println("Format is OK.");
+					System.out.println("PDS4 compliance is OK.");
 				} else {
-					System.out.println("Format is non-compliant.");
+					System.out.println("CDF file is PDS4 non-compliant.");
 					System.out.println("Reasons:");
 				}
 				
@@ -148,7 +148,8 @@ public class Check {
 			return;
 		}
 		if(gdr.mUIRhead != 0L) {
-			mMessages.add("There are unused records in the CDF, most likely remenants of deleted or overwritten varaibles or attributes. These must be removed.");
+			mMessages.add("There are unused records in the CDF, most likely remenants of deleted or overwritten variables or attributes. These must be removed.");
+			mMessages.add("The CDF tool 'cdfconvert <src> <dest>' can fix this issue in many cases. ");
 			mMessages.add("Unused record contains: " + cdf.getUIR(gdr.mUIRhead).mSize + " bytes at offset: " + cdf.getUIR(gdr.mUIRhead).mOffset + " bytes.");
 			
 		}
@@ -274,7 +275,7 @@ public class Check {
 			
 			// Check for compression at the variable level
 			if(vdr.mFlags == Constant.FLAG_COMPRESSION) {
-				mMessages.add("Variable '" + vdr.mName + "' is compressed.");
+				mMessages.add("Variable '" + vdr.mName + "' is compressed. You can use the CDF tool 'cdfconvert' to remove the compression.");
 				stat += " Compressed";
 			}
 			
@@ -285,7 +286,7 @@ public class Check {
 				stat += " Virtual";
 			} else {
 				if(vxr.mNusedEntries > 1) {
-					mMessages.add("Records for variable '" + vdr.mName + "' are fragmented (not contiguous).");
+					mMessages.add("Records for variable '" + vdr.mName + "' are fragmented (not contiguous). Running the CDF tool 'cdfconvert' on the data file will fix this.");
 					stat += " Fragmented";
 				}
 			}
@@ -295,7 +296,7 @@ public class Check {
 			for(Variable v : cdf.getVariables()) {
 				if(v.getAttributeValue("VAR_TYPE").equals("data")) {
 					if((v.mFlags & Constant.FLAG_VARIANCE) != Constant.FLAG_VARIANCE ) {
-						mMessages.add("Records for variable '" + vdr.mName + "' are not invariant.");
+						mMessages.add("Records for variable '" + vdr.mName + "' do not vary. If the variable is a constant you could set VAR_TYPE to 'support_data' to make it conforming.");
 						stat += " Record Variant";			
 					}
 					switch(v.getDataType()) {
@@ -314,14 +315,14 @@ public class Check {
 			if(vdr.mType == Constant.RECORD_ZVDR) {
 				for(int i = vStart; i < vdr.mZNumDims; i++) {
 					if(vdr.mDimVarys[i] != -1) {
-						mMessages.add("Variable '" + vdr.mName + "' is not invariant.");
+						mMessages.add("Variable '" + vdr.mName + "' dimensions are not constant.");
 						stat += " Variant";
 					}
 				}
 			} else {
 				for(int i = vStart; i < vdr.mRNumDims; i++) {
 					if(vdr.mDimVarys[i] != -1) {
-						mMessages.add("Variable '" + vdr.mName + "' is not invariant.");
+						mMessages.add("Variable '" + vdr.mName + "' dimensions are not constant.");
 						stat += " Variant";
 					}
 				}					
@@ -356,7 +357,7 @@ public class Check {
 				// mMessages.add("There are unused variables in the CDF. These must be removed.");
 				break;
 			case Constant.RECORD_RVDR: // rVDR - Non-contiguous storage format
-				mMessages.add("There are rVariables present. These need to be converted to zVaraibles.");
+				mMessages.add("There are rVariables present. These need to be converted to zVariables.");
 				break;
 			case Constant.RECORD_CCR:	// CCR - Compressed
 				mMessages.add("There are compressed records in the CDF.");

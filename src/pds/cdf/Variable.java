@@ -32,7 +32,7 @@ public class Variable {
 		System.out.println("=================================");
 		System.out.println("      Variable: " + mName);
 		System.out.println("=================================");
-		System.out.println("DataType: " + Constant.getDataTypeName(mDataType));
+		System.out.println("DataType: " + Constant.getDataTypeName(mDataType) + "(" + mDataType + ")");
 		System.out.println("Flags: " + Constant.toHexString(mFlags));
 		System.out.println("Index: " + mIndex);
 		System.out.println("StartByte: " + mStartByte);

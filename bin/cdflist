@@ -11,7 +11,6 @@ MY_PATH=$(dirname $0)   # Pure bash ${0%/*}
 if [ "$MY_PATH" == "" ]; then $MY_PATH = "."; fi
 THIS_DIR=$(cd "$MY_PATH" && echo "$(pwd -P)") # like "readlink -nf"
 
-if [ "$DIR" == "" ]; then $DIR = "."; fi
 EXT_DIR="";
 if [ -d "${JAVA_HOME}/jre/lib/ext" ]; then EXT_DIR=";${JAVA_HOME}/jre/lib/ext";
 fi

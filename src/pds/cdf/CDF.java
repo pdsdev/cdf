@@ -97,7 +97,7 @@ public class CDF {
 			if (line.hasOption("a")) showAttributes = true;
 			if (line.hasOption("r")) showVariables = true;
 			
-			// Default is to show both attributes and varaibles
+			// Default is to show both attributes and variables
 			if( ! showAttributes && ! showVariables) {
 				showAttributes = true;
 				showVariables = true;
@@ -189,7 +189,7 @@ public class CDF {
 	public void parse(DataInputStream in) throws IOException {
 		
 		// Magic numbers
-		mVersion = in.readInt(); mOffset += 4;
+		mVersion = in.readInt(); mOffset += 4;		
 		// if(!Util.isValidVersion(mVersion)) return;
 
 		mCompression = in.readInt();  mOffset += 4;
@@ -199,7 +199,7 @@ public class CDF {
 		try {
 			boolean more = true;
 			while(more) {
-				if(endOfCDF > 0 && mOffset >= endOfCDF) { more = false; break; }
+				if(endOfCDF > 0 && mOffset >= endOfCDF) { more = false; break; } // Might have Checksum after endOfCDF
 				Record rec = readRecord(in);
 				if(mVerbose) rec.dump();
 				switch(rec.getType()) {
@@ -211,6 +211,7 @@ public class CDF {
 					mGDR = new GDRecord(rec);
 					mOffset = mGDR.read(mOffset, in);
 					endOfCDF = mGDR.mEOF;
+					if(mVerbose) { System.out.println("EndOfCDF: " + endOfCDF); }
 					break;
 				case Constant.RECORD_ADR: // ADR
 					ADRecord adr = new ADRecord(rec);

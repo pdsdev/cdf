@@ -80,18 +80,38 @@
         </li>
       </ul>
     
-      <h1><a name="Using">Using the Tool</a></h1>
+      <h1><a name="Using">Using the Tools</a></h1>
       <p>
-      Shell scripts to run the tool are in the "bin" directory in the distribution. You can run the tool on a 
-      Linux system with the command:
-         <div class="code">
-            <pre>% ${options.command}</pre>
-         </div>
-      or on a Windows system with the command:
-         <div class="code">
-            <pre>% ${options.command}.bat</pre>
-         </div>
-      Allowed options can be viewed by invoking the tool with no options.
+      Shell scripts to run the tool are in the "bin" directory in the distribution. 
+      Script to support both Linux systems and Windows systems are provided.
+      </p>
+      <p>
+      The available tools are:
+      </p>
+      <ul>
+         <li><b>cdfcheck</b><br/>
+            <p>Scan a CDF file and determine if the content is compliant with archive requirements. 
+               Checks include if the CDF files meets requirements specified for CDF tools, ISTP/CDF and PDS archiving.
+            </p>
+         </li>
+         <li><b>cdfdump</b><br/>
+            <p>Scan a CDF file and show the data block information.
+            </p>
+         </li>
+         <li><b>cdflist</b><br/>
+            <p>Parse a CDF file and create lists of records, attributes and variables defined in the file.
+            </p>
+         </li>
+      </ul>
+      <p>
+      For all the tools, issuing the command with no arguments will provide additional information. 
+      </p>
+      
+      <h1><a name="Velocity">Using with Apache Velocity</a></h1>
+      <p>
+      The CDF parser is also compatible as a plug-in for tools that use the Apache <a href="http://velocity.apache.org/">Velocity</a> 
+      template processing engine. One such tool is the IGPP <a href="http://release.igpp.ucla.edu/igpp/docgen/">Docgen</a> tool. 
+      An example on how to use Docgen with CDF files can be found <a href="http://release.igpp.ucla.edu/igpp/docgen/example/cdf/generate.html">here</a>.
       </p>
    </div><!-- span -->
 <script>footer();</script>

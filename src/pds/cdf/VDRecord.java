@@ -28,7 +28,8 @@ public class VDRecord extends Record {
 	int mZNumDims; // The number of dimensions for this zVariable. This field will not be present if this is an rVDR (rVariable).
 	int[] mZDimSize; // Zero or more contiguous dimension sizes for this zVariable
 	int[] mDimVarys; // Zero or more contiguous dimension variances.
-	double[] mPadValue; // The variable's pad value.
+	double[] mPadValue; // The variable's pad value if numeric data type.
+	String mPadString; // The variable's pad value if character data type.
 
 	// Passed from GDR for rVDR
 	int mRNumDims; // The number of dimensions for this zVariable. This field will not be present if this is an rVDR (rVariable).
@@ -86,8 +87,13 @@ public class VDRecord extends Record {
 		}
 		
 		if((mFlags & Constant.FLAG_PAD) == Constant.FLAG_PAD) {
-			mPadValue = new double[mNumElems];
-			for(int i = 0; i < mNumElems; i++) { mPadValue[i] = readDataValue(in, mDataType); offset += Constant.getDataTypeSize(mDataType); }
+			if(mDataType == Constant.CDF_CHAR) {
+				mPadString = readStringValue(in, mDataType, mNumElems);
+				offset += Constant.getDataTypeSize(mDataType) * mNumElems;
+			} else {
+				mPadValue = new double[mNumElems];
+				for(int i = 0; i < mNumElems; i++) { mPadValue[i] = readDataValue(in, mDataType); offset += Constant.getDataTypeSize(mDataType); }
+			}
 		}
 		
 		return offset;
@@ -101,11 +107,11 @@ public class VDRecord extends Record {
 		System.out.println("              VDR");
 		System.out.println("=================================");
 		System.out.println("VDRnext: " + mVDRnext);
-		System.out.println("DataType: " + mDataType);
+		System.out.println("DataType: " + Constant.getDataTypeName(mDataType) + "(" + mDataType + ")");
 		System.out.println("MaxRec: " + mMaxRec);
 		System.out.println("VXRHead: " + mVXRHead);
 		System.out.println("VXRTail: " + mVXRTail);
-		System.out.println("Flags: " + mFlags);
+		System.out.println("Flags: " + Constant.toHexString(mFlags));
 		System.out.println("SRecords: " + mSRecords);
 		System.out.println("NumElems: " + mNumElems);
 		System.out.println("Num: " + mNum);
@@ -123,8 +129,12 @@ public class VDRecord extends Record {
 		}
 		if((mFlags & Constant.FLAG_PAD) == Constant.FLAG_PAD) {
 			System.out.print("mPadValue:");
-			for(int i = 0; i < mPadValue.length; i++) System.out.print(" " + mPadValue[i]); 
-			System.out.println("");
+			if(mDataType == Constant.CDF_CHAR) {
+				System.out.println(mPadString);
+			} else {
+				for(int i = 0; i < mPadValue.length; i++) System.out.print(" " + mPadValue[i]);
+				System.out.println("");
+			}
 		}
 	}
 }
